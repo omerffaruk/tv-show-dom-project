@@ -31,7 +31,7 @@ function getOneEpisode() {
   };
 }
 
-function getAllEpisodes() {
+function getAllEpisodes() {   // returns an array of episode objects
   return [
     {
       id: 4952,

@@ -9,9 +9,31 @@
   </head>
 
   <body>
-    <div id="root">
-    </div>
 
+    <header class="header">
+      <nav class="navbar">
+
+        <select name="epDropdown" id="epDropdown">
+          <option value="" selected disabled hidden>Select an episode</option>
+        </select>
+
+        <input
+          type="search"
+          placeholder="Search"
+          class="epSearch"
+          id="epSearch"
+          name="epSearch"
+        />
+      </nav>
+      <p class="totalDisplayingEps" id="totalDisplayingEps"></p>
+    </header>
+    <div id="wrapper">
+      <div id="root">
+      </div>
+    </div>
+    
+
+    <!-- <footer id="footer">The data shown in this page is provided by <a href="https://www.tvmaze.com/"target="_blank">TVMaze.com</a></footer> -->
     <!-- Loads a provided function called getAllEpisodes() which returns all episodes -->
     <script src="episodes.js"></script>
 
