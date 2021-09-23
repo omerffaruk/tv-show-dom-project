@@ -13,7 +13,9 @@
     <header class="header">
       <nav class="navbar">
 
-        <select name="epDropdown" id="epDropdown">
+        <!-- <ul id="dropdownMenu">
+        </ul> -->
+        <select name="epDropdown" id="epDropdown" onChange="window.location.href=this.value">
           <option value="" selected disabled hidden>Select an episode</option>
         </select>
 
@@ -33,10 +35,10 @@
     </div>
     
 
-    <!-- <footer id="footer">The data shown in this page is provided by <a href="https://www.tvmaze.com/"target="_blank">TVMaze.com</a></footer> -->
     <!-- Loads a provided function called getAllEpisodes() which returns all episodes -->
+    <footer>The data in this page is provided by <a href="https://www.tvmaze.com/" id="footerTvMazeLink">TVMaze.com</a></footer>
     <script src="episodes.js"></script>
-
+    
     <!-- Loads YOUR javascript code -->
     <script src="script.js"></script>
   </body>
