@@ -9,13 +9,18 @@
   </head>
 
   <body>
-
     <header class="header">
       <nav class="navbar">
 
-        <!-- <ul id="dropdownMenu">
-        </ul> -->
-        <select name="epDropdown" id="epDropdown" onChange="window.location.href=this.value">
+        <select name="showDropdown" id="showDropdown" onchange="getEpsWithFetch(value)">
+          <option value="https://api.tvmaze.com/shows/82/episodes" selected disabled hidden>Game of Thrones</option>
+        </select>
+
+        <select
+          name="epDropdown"
+          id="epDropdown"
+          onChange="window.location.href=this.value"
+        >
           <option value="" selected disabled hidden>Select an episode</option>
         </select>
 
@@ -26,19 +31,21 @@
           id="epSearch"
           name="epSearch"
         />
+        <p class="totalDisplayingEps" id="totalDisplayingEps"></p>
       </nav>
-      <p class="totalDisplayingEps" id="totalDisplayingEps"></p>
     </header>
     <div id="wrapper">
-      <div id="root">
-      </div>
+      <div id="root"></div>
     </div>
-    
 
     <!-- Loads a provided function called getAllEpisodes() which returns all episodes -->
-    <footer>The data in this page is provided by <a href="https://www.tvmaze.com/" id="footerTvMazeLink">TVMaze.com</a></footer>
+    <footer>
+      The data in this page is provided by
+      <a href="https://www.tvmaze.com/" id="footerTvMazeLink">TVMaze.com</a>
+    </footer>
     <script src="episodes.js"></script>
-    
+    <script src="shows.js"></script>
+
     <!-- Loads YOUR javascript code -->
     <script src="script.js"></script>
   </body>

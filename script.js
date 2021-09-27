@@ -1,40 +1,44 @@
 //You can edit ALL of the code here
 // <---- These are variables that store HTML elements that needed ---->
-const api = "https://api.tvmaze.com/shows/82/episodes";
+// const api = "https://api.tvmaze.com/shows/82/episodes";
 const rootElem = document.getElementById("root");   // div that wraps all the epContainer divs
 const epSearch = document.getElementById("epSearch");   // search input field
 const totalDisplayingEpsP = document.getElementById("totalDisplayingEps"); 
-const select = document.getElementById("epDropdown");
+const epSelect = document.getElementById("epDropdown");
+const showSelect = document.getElementById("showDropdown");
+const allShows = getAllShows();
+console.log(allShows);
 
-async function getEpsWithFetchAndBuildThePage () {  //builds the page with ep cards and returns json in array format
+async function getEpsWithFetch (api = 'https://api.tvmaze.com/shows/82/episodes') {  //builds the page with ep cards and returns json in array format
+  rootElem.innerHTML = '';
   const promise = await fetch(api);
-  const json = await promise.json();
-  makePageForEpisodes(json);
-  createDropDownSelectEpMenu(json);
+  const jsonEps = await promise.json();
+  makePageForEpisodes(jsonEps);
+  createEpDropDownSelectEpMenu(jsonEps);
+  createShowDropDownSelectEpMenu(allShows);
  
   function filterEpisodes(word) {  // only return episodes that include the searched input value in their summary or name (for search) 
-    return json.filter((ep) => {
+    return jsonEps.filter((ep) => {
       return (
         ep.name.toLowerCase().includes(word) ||
         ep.summary.toLowerCase().includes(word)
       );
     });
   }
-  totalDisplayingEpsP.textContent = `Displaying all ${json.length} episodes`;
+  totalDisplayingEpsP.textContent = `Displaying all ${jsonEps.length} episodes`;
 
   
   function render(word = "") { // render the page according the search input value
     rootElem.innerHTML = "";
     word = cleanUpWord(word);
     const filtered = filterEpisodes(word);
-    totalDisplayingEpsP.innerText = `Displaying ${filtered.length}/${json.length} episodes.`;
+    totalDisplayingEpsP.innerText = `Displaying ${filtered.length}/${jsonEps.length} episodes.`;
     makePageForEpisodes(filtered);
   }
 
   epSearch.addEventListener("input", () => {
     render(epSearch.value);
   });
-  return json;
 }
 
 function makePageForEpisodes(episodeList) {  // this function creates div for each ep and fill their content
@@ -72,17 +76,32 @@ function formatEp(num) {  // format the number suitable for Season - Episode for
   return str.padStart(2, "0");
 }
 
-function createDropDownSelectEpMenu (episodeList) {  // creates drop down select menu with each option a link to the episode
+function createEpDropDownSelectEpMenu (episodeList) {  // creates drop down select menu with each option a link to the episode
+  epSelect.innerHTML = '';
   episodeList.forEach((ep) => {
      const option = document.createElement("option"); // create option element for each ep and fill the select dropdown
      option.value = `${ep.url}`;
-     select.add(option);
+     epSelect.add(option);
      option.innerHTML = `S${formatEp(ep.season)}E${formatEp(ep.number)} - ${ep.name}`;
   })
+}
+
+function createShowDropDownSelectEpMenu(showList) {
+  // creates drop down select menu with each option a link to the episode
+  showList.forEach((show) => {
+    const option = document.createElement("option"); // create option element for each ep and fill the select dropdown
+    option.value = `https://api.tvmaze.com/shows/${show.id}/episodes`;
+    showSelect.add(option);
+    option.innerHTML = `${show.name}`;
+  });
 }
 
 function cleanUpWord (word) {   // format the input value (for the search bar) (toLowerCase and trim)
   return word.trim().toLowerCase();
 }
 
-window.onload = getEpsWithFetchAndBuildThePage;
+function setup () {
+  getEpsWithFetch("https://api.tvmaze.com/shows/82/episodes");
+}
+
+window.onload = setup;
