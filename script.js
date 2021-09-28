@@ -86,9 +86,9 @@ function createEpDropDownSelectEpMenu (episodeList) {  // creates drop down sele
   })
 }
 
-function createShowDropDownSelectEpMenu(showList) {
-  // creates drop down select menu with each option a link to the episode
-  showList.forEach((show) => {
+function createShowDropDownSelectEpMenu(showList) {  // creates drop down show select menu with each option calls and api to the relevant TV show
+  const sortedShowListInAlphabeticalOrder = showList.sort((a, b) => a.name.localeCompare(b.name));
+  sortedShowListInAlphabeticalOrder.forEach((show) => {
     const option = document.createElement("option"); // create option element for each ep and fill the select dropdown
     option.value = `https://api.tvmaze.com/shows/${show.id}/episodes`;
     showSelect.add(option);
