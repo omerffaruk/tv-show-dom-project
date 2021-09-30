@@ -9,39 +9,73 @@ const showSelect = document.getElementById("showDropdown");
 const allShows = getAllShows();
 console.log(allShows);
 
-async function getEpsWithFetch (api = 'https://api.tvmaze.com/shows/82/episodes') {  //builds the page with ep cards and returns json in array format
+async function getEpsWithFetch (api = 'https://api.tvmaze.com/shows/82/episodes', showId) {  //builds the page with ep cards and returns json in array format
   rootElem.innerHTML = '';
   const promise = await fetch(api);
   const jsonEps = await promise.json();
-  makePageForEpisodes(jsonEps);
+  makeEpCardForEachEp(jsonEps);
   createEpDropDownSelectEpMenu(jsonEps);
-  createShowDropDownSelectEpMenu(allShows);
+  updateSelectShowMenu(showId);
+  epSelect.style.display = "block";
  
-  function filterEpisodes(word) {  // only return episodes that include the searched input value in their summary or name (for search) 
-    return jsonEps.filter((ep) => {
-      return (
-        ep.name.toLowerCase().includes(word) ||
-        ep.summary.toLowerCase().includes(word)
-      );
-    });
-  }
   totalDisplayingEpsP.textContent = `Displaying all ${jsonEps.length} episodes`;
-
-  
-  function render(word = "") { // render the page according the search input value
-    rootElem.innerHTML = "";
-    word = cleanUpWord(word);
-    const filtered = filterEpisodes(word);
-    totalDisplayingEpsP.innerText = `Displaying ${filtered.length}/${jsonEps.length} episodes.`;
-    makePageForEpisodes(filtered);
-  }
+  totalDisplayingEpsP.style.display = "block";
 
   epSearch.addEventListener("input", () => {
-    render(epSearch.value);
+    render(epSearch.value, jsonEps, makeEpCardForEachEp);
   });
 }
 
-function makePageForEpisodes(episodeList) {  // this function creates div for each ep and fill their content
+  function filterEpisodes(word, list) {
+    // only return episodes that include the searched input value in their summary or name (for search)
+    return list.filter((ep) => {
+      if (ep.genres) {
+        const genres = ep.genres.join(" ").toLowerCase();
+        return (
+          ep.name.toLowerCase().includes(word) ||
+          ep.summary.toLowerCase().includes(word) ||
+          genres.includes(word)
+        );
+      } else {
+        return (
+          ep.name.toLowerCase().includes(word) ||
+          ep.summary.toLowerCase().includes(word)
+        );
+      }
+    });
+  }
+
+function render(word = "", list, callback) {
+  // render the page according the search input value
+  rootElem.innerHTML = "";
+  word = cleanUpWord(word);
+  const filtered = filterEpisodes(word, list);
+  totalDisplayingEpsP.innerText = `Displaying ${filtered.length}/${list.length} episodes.`;
+  callback(filtered);
+  return filtered;
+}
+
+function makeShowCardForEachShow(showList) {
+  rootElem.innerHTML = '';
+  epSelect.style.display = "none";
+  totalDisplayingEpsP.innerHTML = `Found ${showList.length > 1 ? `${showList.length} shows` : `${showList.length} show`}`
+  const sortedShowListInAlphabeticalOrder = showList.sort((a, b) => a.name.localeCompare(b.name));
+  let showCards = ``;
+  sortedShowListInAlphabeticalOrder.forEach((show) => {
+    const api = `https://api.tvmaze.com/shows/${show.id}/episodes`;
+    showCards += `<div class="epContainer" onclick="getEpsWithFetch('${api}', '${show.id}')">
+    <h2 class="showName">${show.name}</h2>
+    ${show.image ? `<img class="showImage" src="${show.image.medium}" alt="${show.name}">` : ''}
+    ${show.summary}
+    <p class="showRating"><strong>Rated:</strong> ${show.rating.average}</p>
+    <p class="showGenres"><strong>Genres:</strong> ${show.genres.join(" ")}</p>
+    <p class="showRuntime"><strong>Runtime:</strong> ${show.runtime}</p>
+    </div>`;
+  });
+  rootElem.innerHTML = showCards;
+}
+
+function makeEpCardForEachEp(episodeList) {  // this function creates div for each ep and fill their content
   for(let i = 0; i < episodeList.length; i++) {    
     const ep = episodeList[i]; 
     const epContainerDiv = document.createElement("div");   // create container div for each episode
@@ -86,11 +120,18 @@ function createEpDropDownSelectEpMenu (episodeList) {  // creates drop down sele
   })
 }
 
+function updateSelectShowMenu(showId) {
+  const option = document.getElementById(showId);
+  option.setAttribute("selected", true);
+}
+
 function createShowDropDownSelectEpMenu(showList) {  // creates drop down show select menu with each option calls and api to the relevant TV show
+  showSelect.innerHTML = '';
   const sortedShowListInAlphabeticalOrder = showList.sort((a, b) => a.name.localeCompare(b.name));
   sortedShowListInAlphabeticalOrder.forEach((show) => {
     const option = document.createElement("option"); // create option element for each ep and fill the select dropdown
     option.value = `https://api.tvmaze.com/shows/${show.id}/episodes`;
+    option.id = `${show.id}`;
     showSelect.add(option);
     option.innerHTML = `${show.name}`;
   });
@@ -101,7 +142,14 @@ function cleanUpWord (word) {   // format the input value (for the search bar) (
 }
 
 function setup () {
-  getEpsWithFetch("https://api.tvmaze.com/shows/82/episodes");
+  makeShowCardForEachShow(allShows);
+  createShowDropDownSelectEpMenu(allShows);
+
+  epSearch.addEventListener("input", () => {
+    const input = epSearch.value;
+    render(input, allShows, makeShowCardForEachShow);
+    createShowDropDownSelectEpMenu(filterEpisodes(input, allShows));
+  });
 }
 
 window.onload = setup;

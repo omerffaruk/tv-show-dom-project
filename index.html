@@ -5,15 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TV Show Project | Omer Yamak (omerffaruk)</title>
     <link href="style.css" rel="stylesheet" />
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   </head>
 
   <body>
     <header class="header">
       <nav class="navbar">
 
+        <img id="pageLogo" src="/favicon.ico" alt="logo" onclick="setup()"/>
+
         <select name="showDropdown" id="showDropdown" onchange="getEpsWithFetch(value)">
-          <option value="https://api.tvmaze.com/shows/82/episodes" selected disabled hidden>Game of Thrones</option>
+          <option value="" selected disabled hidden>Select a show</option>
         </select>
 
         <select
@@ -43,8 +45,8 @@
       The data in this page is provided by
       <a href="https://www.tvmaze.com/" id="footerTvMazeLink">TVMaze.com</a>
     </footer>
-    <script src="episodes.js"></script>
     <script src="shows.js"></script>
+    <script src="episodes.js"></script>
 
     <!-- Loads YOUR javascript code -->
     <script src="script.js"></script>
